@@ -1,0 +1,35 @@
+{
+    "name": "ka4ivan/laravel-api-debugger",
+    "description": "A debugging tool for Laravel APIs that provides request execution time and query profiling.",
+    "keywords": [
+        "debug", "api", "laravel", "debugbar", "profiler", "performance", "request-debug", "query-log", "monitoring", "kachula"
+    ],
+    "authors": [
+        {
+            "name": "Kachula Ivan",
+            "email": "ka4ivan.dev@gmail.com",
+            "role": "Architect & Developer",
+            "homepage": "https://github.com/ka4ivan"
+        }
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.0.2",
+        "illuminate/support": "^9.0|^10.0|^11.0|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ka4ivan\\ApiDebugger\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ka4ivan\\ApiDebugger\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
