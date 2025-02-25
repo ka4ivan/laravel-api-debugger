@@ -26,7 +26,7 @@ When you send an API request and `APP_DEBUG=true`, you'll receive the following 
 ```json
 {
     "data": {
-        ...
+        "..."
     },
     "debugger": {
         "queries": {
