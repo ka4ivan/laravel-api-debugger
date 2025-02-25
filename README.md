@@ -31,7 +31,7 @@ When you send an API request and `APP_DEBUG=true`, you'll receive the following 
     "debugger": {
         "queries": {
             "count": 7,
-            "time": 5.57,
+            "time": 14.57,
             "data": [
                 {
                     "query": "select * from `domains` where `is_active` = ? limit 1",
