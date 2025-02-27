@@ -20,8 +20,6 @@ class ApiDebuggerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $request->startDebug();
-
         $response = $next($request);
 
         if (!$request->expectsJson() || !config('app.debug', false)) {
