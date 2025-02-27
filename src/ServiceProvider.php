@@ -20,6 +20,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->registerMacros();
         $this->registerMiddleware();
+
+        if (app(ApiDebugger::class)->isActive()) {
+            $this->startDebug();
+        }
     }
 
     /**
@@ -56,5 +60,17 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 [ApiDebuggerMiddleware::class]
             ));
         }));
+    }
+
+    /**
+     * Start Debugging
+     *
+     * @return void
+     */
+    protected function startDebug(): void
+    {
+        $this->app->booted(function () {
+            app(ApiDebugger::class)->startDebug();
+        });
     }
 }
