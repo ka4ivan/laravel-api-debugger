@@ -50,7 +50,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     protected function registerMiddleware(): void
     {
-        $this->app->booted(fn() => tap($this->app->make(Router::class), function (Router $router) {
+        $this->app->booted(fn() => tap($this->app->make(Router::class), function(Router $router) {
             $router->middlewareGroup('api', array_merge(
                 $router->getMiddlewareGroups()['api'] ?? [],
                 [ApiDebuggerMiddleware::class]

@@ -7,6 +7,7 @@ namespace Ka4ivan\ApiDebugger\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 
 class ApiDebuggerMiddleware
 {
@@ -27,8 +28,7 @@ class ApiDebuggerMiddleware
             return $response;
         }
 
-        // Перевірка, чи є відповідь типу JsonResponse
-        if ($response instanceof \Illuminate\Http\JsonResponse) {
+        if ($response instanceof JsonResponse) {
             $response->setData(array_merge($response->getData(true), $request->getDebug()));
         }
 

@@ -90,7 +90,7 @@ class ApiDebugger
      * @param float $threshold
      * @return array
      */
-    protected function checkLongQueries(array $queries, float $threshold = 1.0): array
+    protected function checkLongQueries(array $queries, float $threshold = 10.0): array
     {
         $longQueries = [];
 
