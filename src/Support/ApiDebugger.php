@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ka4ivan\ApiDebugger\Support;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class ApiDebugger
@@ -56,7 +57,7 @@ class ApiDebugger
     protected function getRequestInfo(Request $request): array
     {
         return [
-            'body' => $request->all(),
+            'body' => Arr::except($request->input(), ['password', 'confirm_password', 'password_confirmation', '_destination', '_method', '_token', '_modal', 'destination']),
             'headers' => $request->header(),
         ];
     }
