@@ -30,7 +30,7 @@ When you send an API request and `APP_DEBUG=true`, you'll receive the following 
     },
     "debugger": {
         "queries": {
-            "count": 7,
+            "count": 8,
             "time": 14.57,
             "data": [
                 {
