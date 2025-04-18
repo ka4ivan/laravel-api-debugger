@@ -119,7 +119,7 @@ When you send an API request and `APP_DEBUG=true`, you'll receive the following 
                     "dev-packages.test"
                 ],
                 "postman-token": [
-                    "12366123-6abf-4511-9b91-7285f5123123"
+                    "8654756-6abf-4511-9b91-72865463"
                 ],
                 "user-agent": [
                     "PostmanRuntime/7.37.3"
