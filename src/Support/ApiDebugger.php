@@ -101,7 +101,6 @@ class ApiDebugger
         ];
     }
 
-
     /**
      * Check for long queries (taking longer than a specified threshold).
      *
@@ -111,15 +110,11 @@ class ApiDebugger
      */
     protected function checkLongQueries(array $queries, float $threshold = 10.0): array
     {
-        $longQueries = [];
-
-        foreach ($queries as $query) {
-            if ($query['time'] > $threshold) {
-                $longQueries[] = $query;
-            }
-        }
-
-        return $longQueries;
+        return collect($queries)
+            ->filter(fn ($query) => $query['time'] > $threshold)
+            ->sortByDesc('time')
+            ->values()
+            ->all();
     }
 
     /**
