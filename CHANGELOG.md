@@ -1,6 +1,14 @@
  
 # Changelog
 
+## 2.0.0 - 2025-07-28
+- Added Backtrace queries info
+- Changes to key names in debug json
+  - `query` -> `sql`
+  - `n_plus_one` -> `repeated_queries`
+- Sorting long queries by execution time
+- Refactor
+
 ## 1.0.3 - 2025-03-28
 - Fix for debugging temporary files
 

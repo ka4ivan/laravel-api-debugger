@@ -34,60 +34,77 @@ When you send an API request and `APP_DEBUG=true`, you'll receive the following 
             "time": 14.57,
             "data": [
                 {
-                    "query": "select * from `domains` where `is_active` = ? limit 1",
-                    "bindings": [
-                        true
-                    ],
-                    "time": 10.09
+                    "sql": "select * from `domains` where `is_active` = ? limit 1",
+                    "bindings": [true],
+                    "time": 10.09,
+                    "trace": [
+                        "/var/www/html/app/Support/Domains/Domain.php:101",
+                        "/var/www/html/app/Http/Middleware/SetClientDomain.php:32",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `products` limit 1",
+                    "sql": "select * from `products` limit 1",
                     "bindings": [],
-                    "time": 0.75
+                    "time": 0.75,
+                    "trace": [
+                        "/var/www/html/app/Http/Controllers/ProductController.php:27",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `menu_items` where (`domain_id` = ? or `domain_id` is null) order by `weight` asc",
-                    "bindings": [
-                        "8e591823-4f64-4e90-b564-e0c090696d6e"
-                    ],
-                    "time": 0.82
+                    "sql": "select * from `menu_items` where (`domain_id` = ? or `domain_id` is null) order by `weight` asc",
+                    "bindings": ["8e591823-4f64-4e90-b564-e0c090696d6e"],
+                    "time": 0.82,
+                    "trace": [
+                        "/var/www/html/app/Support/Menu/MenuLoader.php:17",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `pages` where `slug` = ? and (`domain_id` = ? or `domain_id` is null) and `status` = ? order by `weight` asc, `created_at` asc limit 1",
-                    "bindings": [
-                        "contacts",
-                        "8e591823-4f64-4e90-b564-e0c090696d6e",
-                        "published"
-                    ],
-                    "time": 0.76
+                    "sql": "select * from `pages` where `slug` = ? and (`domain_id` = ? or `domain_id` is null) and `status` = ? order by `weight` asc, `created_at` asc limit 1",
+                    "bindings": ["contacts", "8e591823-4f64-4e90-b564-e0c090696d6e", "published"],
+                    "time": 0.76,
+                    "trace": [
+                        "/var/www/html/app/Support/Pages/PageService.php:89",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `comparisons` where `guest_id` = ?",
-                    "bindings": [
-                        "62afacc1-37b2-464d-8028-818745e56de5"
-                    ],
-                    "time": 0.61
+                    "sql": "select * from `comparisons` where `guest_id` = ?",
+                    "bindings": ["62afacc1-37b2-464d-8028-818745e56de5"],
+                    "time": 0.61,
+                    "trace": [
+                        "/var/www/html/app/Http/Middleware/ComparisonMiddleware.php:19",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `comparisons` where `guest_id` = ?",
-                    "bindings": [
-                        "62afacc1-37b2-464d-8028-818745e56de5"
-                    ],
-                    "time": 0.61
+                    "sql": "select * from `comparisons` where `guest_id` = ?",
+                    "bindings": ["62afacc1-37b2-464d-8028-818745e56de5"],
+                    "time": 0.61,
+                    "trace": [
+                        "/var/www/html/app/Http/Middleware/ComparisonMiddleware.php:20",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `comparisons` where `guest_id` = ?",
-                    "bindings": [
-                        "62afacc1-37b2-464d-8028-818745e56de5"
-                    ],
-                    "time": 0.63
+                    "sql": "select * from `comparisons` where `guest_id` = ?",
+                    "bindings": ["62afacc1-37b2-464d-8028-818745e56de5"],
+                    "time": 0.63,
+                    "trace": [
+                        "/var/www/html/app/Http/Middleware/ComparisonMiddleware.php:21",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 },
                 {
-                    "query": "select * from `seos` where `path` = ? limit 1",
-                    "bindings": [
-                        ""
-                    ],
-                    "time": 0.93
+                    "sql": "select * from `seos` where `path` = ? limit 1",
+                    "bindings": [""],
+                    "time": 0.93,
+                    "trace": [
+                        "/var/www/html/app/Http/Controllers/SeoController.php:14",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 }
             ],
             "long_queries": [
@@ -96,13 +113,32 @@ When you send an API request and `APP_DEBUG=true`, you'll receive the following 
                     "bindings": [
                         true
                     ],
-                    "time": 10.09
+                    "time": 10.09,
+                    "trace": [
+                        "/var/www/html/app/Support/Domains/Domain.php:101",
+                        "/var/www/html/app/Http/Middleware/SetClientDomain.php:32",
+                        "/var/www/html/public/index.php:51"
+                    ]
                 }
             ],
-            "n_plus_one": [
+            "repeated_queries": [
                 {
                     "query": "select * from `comparisons` where `guest_id` = ?",
-                    "count": 3
+                    "count": 3,
+                    "backtrace": [
+                          [
+                              "/var/www/html/app/Http/Middleware/ComparisonMiddleware.php:19",
+                              "/var/www/html/public/index.php:51"
+                          ],
+                          [
+                              "/var/www/html/app/Http/Middleware/ComparisonMiddleware.php:20",
+                              "/var/www/html/public/index.php:51"
+                          ],
+                          [
+                              "/var/www/html/app/Http/Middleware/ComparisonMiddleware.php:21",
+                              "/var/www/html/public/index.php:51"
+                          ]
+                      ]
                 }
             ]
         },

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class ApiDebugger
 {
+    private array $queries = [];
+
     /**
      * Check if the debugger is active based on APP_DEBUG environment variable.
      *
@@ -27,9 +29,24 @@ class ApiDebugger
      */
     public function startDebug(): void
     {
-        if ($this->isActive()) {
-            DB::enableQueryLog();
+        if (!$this->isActive()) {
+            return;
         }
+
+        $this->queries = [];
+
+        DB::listen(function ($query) {
+            $this->queries[] = [
+                'sql' => $query->sql,
+                'bindings' => $query->bindings,
+                'time' => $query->time,
+                'trace' => collect(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS))
+                    ->filter(fn ($trace) => isset($trace['file']) && !str_contains($trace['file'], 'vendor'))
+                    ->map(fn ($trace) => "{$trace['file']}:{$trace['line']}")
+                    ->values()
+                    ->all(),
+            ];
+        });
     }
 
     /**
@@ -69,18 +86,18 @@ class ApiDebugger
      */
     protected function getQueriesInfo(): array
     {
-        $queries = DB::getQueryLog();
-        $totalTime = round(array_reduce($queries, fn ($carry, $query) => $carry + $query['time'], 0), 2);
+        $queries = $this->queries;
 
+        $totalTime = round(array_reduce($queries, fn ($carry, $query) => $carry + $query['time'], 0), 2);
         $longQueries = $this->checkLongQueries($queries);
-        $nPlusOneIssues = $this->checkNPlusOne($queries);
+        $repeatedQueries = $this->checkRepeatedQueries($queries);
 
         return [
             'count' => count($queries),
             'time' => $totalTime,
             'data' => $queries,
             'long_queries' => $longQueries,
-            'n_plus_one' => $nPlusOneIssues,
+            'repeated_queries' => $repeatedQueries,
         ];
     }
 
@@ -93,15 +110,11 @@ class ApiDebugger
      */
     protected function checkLongQueries(array $queries, float $threshold = 10.0): array
     {
-        $longQueries = [];
-
-        foreach ($queries as $query) {
-            if ($query['time'] > $threshold) {
-                $longQueries[] = $query;
-            }
-        }
-
-        return $longQueries;
+        return collect($queries)
+            ->filter(fn ($query) => $query['time'] > $threshold)
+            ->sortByDesc('time')
+            ->values()
+            ->all();
     }
 
     /**
@@ -112,29 +125,31 @@ class ApiDebugger
      * @param array $queries
      * @return array
      */
-    protected function checkNPlusOne(array $queries): array
+    protected function checkRepeatedQueries(array $queries): array
     {
-        $queryCounts = [];
-        $nPlusOneIssues = [];
+        $queryMap = [];
+        $repeatedQueries = [];
 
         foreach ($queries as $query) {
-            $queryKey = $query['query'];
-            if (isset($queryCounts[$queryKey])) {
-                $queryCounts[$queryKey]++;
-            } else {
-                $queryCounts[$queryKey] = 1;
-            }
+            $queryKey = $query['sql'];
+            $queryMap[$queryKey][] = $query;
         }
 
-        foreach ($queryCounts as $queryKey => $count) {
-            if ($count > 1) {
-                $nPlusOneIssues[] = [
-                    'query' => $queryKey,
-                    'count' => $count,
+        foreach ($queryMap as $sql => $instances) {
+            if (count($instances) > 1) {
+                $backtraces = array_map(
+                    fn ($q) => $q['trace'],
+                    $instances
+                );
+
+                $repeatedQueries[] = [
+                    'sql' => $sql,
+                    'count' => count($instances),
+                    'backtrace' => $backtraces,
                 ];
             }
         }
 
-        return $nPlusOneIssues;
+        return $repeatedQueries;
     }
 }
