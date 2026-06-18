@@ -77,6 +77,14 @@ class ApiDebugger
     }
 
     /**
+     * @return string
+     */
+    public function getResponseKey(): string
+    {
+        return config('api-debugger.response_key', 'debugger');
+    }
+
+    /**
      * Get the debugging information including request data and queries executed.
      *
      * @param Request $request
@@ -85,7 +93,7 @@ class ApiDebugger
     public function getDebug(Request $request): array
     {
         return [
-            'debugger' => [
+            $this->getResponseKey() => [
                 'queries' => $this->getQueriesInfo(),
                 'request' => $this->getRequestInfo($request),
             ],
