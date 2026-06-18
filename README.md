@@ -13,7 +13,12 @@
 composer require ka4ivan/laravel-api-debugger --dev
 ```
 
-2) Debug works if the `APP_DEBUG` = `true`
+2) Publish package resource:
+```shell
+php artisan vendor:publish --provider="Ka4ivan\ApiDebugger\ServiceProvider"
+```
+
+3) Debug works if the `APP_DEBUG` = `true`
 
 ### How it works
 - The debugger will start logging SQL queries and request data for every API request.

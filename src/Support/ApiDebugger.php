@@ -6,6 +6,7 @@ namespace Ka4ivan\ApiDebugger\Support;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class ApiDebugger
@@ -19,7 +20,33 @@ class ApiDebugger
      */
     public function isActive(): bool
     {
-        return (bool) env('APP_DEBUG');
+        return config('app.debug')
+            && config('api-debugger.enabled', true)
+            && !$this->isExcepted();
+    }
+
+    /**
+     * Check whether the current request should be excluded from debugging.
+     *
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public function isExcepted(?Request $request = null): bool
+    {
+        $request ??= request();
+
+        $path = ltrim($request->path(), '/');
+
+        $except = config('api-debugger.except', []);
+
+        foreach ($except as $pattern) {
+            if (Str::is($pattern, $path)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

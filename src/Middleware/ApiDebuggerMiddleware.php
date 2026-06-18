@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Ka4ivan\ApiDebugger\Support\ApiDebugger;
 
 class ApiDebuggerMiddleware
 {
@@ -22,7 +23,9 @@ class ApiDebuggerMiddleware
     {
         $response = $next($request);
 
-        if (!$request->expectsJson() || !config('app.debug', false)) {
+        $debugger = app(ApiDebugger::class);
+
+        if (!$request->expectsJson() || !$debugger->isActive()) {
             return $response;
         }
 

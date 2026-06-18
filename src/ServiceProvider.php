@@ -18,6 +18,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot(): void
     {
+        $this->publishConfig();
         $this->registerMacros();
         $this->registerMiddleware();
 
@@ -33,7 +34,14 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(ApiDebugger::class);
+        $this->app->scoped(ApiDebugger::class);
+    }
+
+    protected function publishConfig(): void
+    {
+        $this->publishes([
+            __DIR__ . '/../config/api-debugger.php' => config_path('api-debugger.php'),
+        ], 'api-debugger-config');
     }
 
     /**
