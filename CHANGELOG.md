@@ -1,6 +1,9 @@
  
 # Changelog
 
+## 2.1.1 - 2026-06-19
+- Upd comments
+
 ## 2.1.0 - 2026-06-18
 - Added config file
 - Ability to specify exclusions
