@@ -21,7 +21,6 @@ return [
     */
     'response_key' => env('API_DEBUGGER_RESPONSE_KEY', 'debugger'),
 
-
     /*
     |--------------------------------------------------------------------------
     | Excepted paths

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 class ApiDebugger
 {
     private array $queries = [];
+    private bool $listenerRegistered = false;
 
     /**
      * Check if the debugger is active based on APP_DEBUG environment variable.
@@ -56,11 +57,12 @@ class ApiDebugger
      */
     public function startDebug(): void
     {
-        if (!$this->isActive()) {
+        if (!$this->isActive() || $this->listenerRegistered) {
             return;
         }
 
-        $this->queries = [];
+        $this->listenerRegistered = true;
+        $this->reset();
 
         DB::listen(function ($query) {
             $this->queries[] = [
@@ -74,6 +76,14 @@ class ApiDebugger
                     ->all(),
             ];
         });
+    }
+
+    /**
+     * @return void
+     */
+    public function reset(): void
+    {
+        $this->queries = [];
     }
 
     /**

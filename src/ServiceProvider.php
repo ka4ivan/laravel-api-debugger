@@ -6,6 +6,7 @@ namespace Ka4ivan\ApiDebugger;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\DB;
 use Ka4ivan\ApiDebugger\Middleware\ApiDebuggerMiddleware;
 use Ka4ivan\ApiDebugger\Support\ApiDebugger;
 
@@ -22,8 +23,16 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->registerMacros();
         $this->registerMiddleware();
 
-        if (app(ApiDebugger::class)->isActive()) {
-            $this->startDebug();
+        if (class_exists(\Laravel\Octane\Events\RequestReceived::class)) {
+            $this->app['events']->listen(\Laravel\Octane\Events\RequestReceived::class, function () {
+                app(ApiDebugger::class)->reset();
+            });
+        }
+
+        if (class_exists(\Laravel\Octane\Events\RequestTerminated::class)) {
+            $this->app['events']->listen(\Laravel\Octane\Events\RequestTerminated::class, function () {
+                app(ApiDebugger::class)->reset();
+            });
         }
     }
 
@@ -34,7 +43,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register(): void
     {
-        $this->app->scoped(ApiDebugger::class);
+        $this->app->scoped(ApiDebugger::class, function () {
+            return new ApiDebugger();
+        });
     }
 
     protected function publishConfig(): void

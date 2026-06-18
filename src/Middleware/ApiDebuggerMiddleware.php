@@ -21,16 +21,20 @@ class ApiDebuggerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $response = $next($request);
-
         $debugger = app(ApiDebugger::class);
 
-        if (!$request->expectsJson() || !$debugger->isActive()) {
-            return $response;
+        if ($debugger->isActive()) {
+            $debugger->startDebug();
         }
 
-        if ($response instanceof JsonResponse) {
-            $response->setData(array_merge($response->getData(true), $request->getDebug()));
+        $response = $next($request);
+
+        if ($request->expectsJson() && $debugger->isActive()) {
+            if ($response instanceof JsonResponse) {
+                $response->setData(
+                    array_merge($response->getData(true), $request->getDebug())
+                );
+            }
         }
 
         return $response;
