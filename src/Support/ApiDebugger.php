@@ -6,11 +6,13 @@ namespace Ka4ivan\ApiDebugger\Support;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class ApiDebugger
 {
     private array $queries = [];
+    private bool $listenerRegistered = false;
 
     /**
      * Check if the debugger is active based on APP_DEBUG environment variable.
@@ -19,7 +21,33 @@ class ApiDebugger
      */
     public function isActive(): bool
     {
-        return (bool) env('APP_DEBUG');
+        return config('app.debug')
+            && config('api-debugger.enabled', true)
+            && !$this->isExcepted();
+    }
+
+    /**
+     * Check whether the current request should be excluded from debugging.
+     *
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public function isExcepted(?Request $request = null): bool
+    {
+        $request ??= request();
+
+        $path = ltrim($request->path(), '/');
+
+        $except = config('api-debugger.except', []);
+
+        foreach ($except as $pattern) {
+            if (Str::is($pattern, $path)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -29,11 +57,12 @@ class ApiDebugger
      */
     public function startDebug(): void
     {
-        if (!$this->isActive()) {
+        if (!$this->isActive() || $this->listenerRegistered) {
             return;
         }
 
-        $this->queries = [];
+        $this->listenerRegistered = true;
+        $this->reset();
 
         DB::listen(function ($query) {
             $this->queries[] = [
@@ -50,6 +79,22 @@ class ApiDebugger
     }
 
     /**
+     * @return void
+     */
+    public function reset(): void
+    {
+        $this->queries = [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseKey(): string
+    {
+        return config('api-debugger.response_key', 'debugger');
+    }
+
+    /**
      * Get the debugging information including request data and queries executed.
      *
      * @param Request $request
@@ -58,7 +103,7 @@ class ApiDebugger
     public function getDebug(Request $request): array
     {
         return [
-            'debugger' => [
+            $this->getResponseKey() => [
                 'queries' => $this->getQueriesInfo(),
                 'request' => $this->getRequestInfo($request),
             ],

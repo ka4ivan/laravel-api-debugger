@@ -1,6 +1,14 @@
  
 # Changelog
 
+## 2.1.1 - 2026-06-19
+- Upd comments
+
+## 2.1.0 - 2026-06-18
+- Added config file
+- Ability to specify exclusions
+- Laravel Octane support added
+
 ## 2.0.0 - 2025-07-28
 - Added Backtrace queries info
 - Changes to key names in debug json
